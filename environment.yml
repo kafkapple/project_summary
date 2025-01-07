@@ -1,0 +1,26 @@
+name: qlora
+channels:
+  - pytorch
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.8
+  - numpy=1.24.3
+  - pytorch=2.0.1
+  - torchvision=0.15.2
+  - pytorch-lightning=1.9.0
+  - transformers=4.30.2
+  - datasets
+  - wandb
+  - hydra-core=1.3.2
+  - torchmetrics=0.11.4
+  - omegaconf
+  - accelerate
+  - sentencepiece
+  - protobuf
+  - pip
+  - pip:
+    - peft==0.4.0
+    - blobfile
+    - tiktoken==0.4.0
+    - rouge-score 

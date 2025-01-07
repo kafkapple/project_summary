@@ -1,0 +1,22 @@
+_target_: transformers.BartForConditionalGeneration
+name: "facebook/bart-large-cnn"
+
+model_config:
+  max_length: 1024
+  min_length: 50
+  length_penalty: 2.0
+  num_beams: 4
+  no_repeat_ngram_size: 3
+
+training:
+  epochs: 3
+  batch_size: 8
+  learning_rate: 2e-5
+  warmup_steps: 500
+  max_grad_norm: 1.0
+  weight_decay: 0.01
+
+fine_tuning:
+  unfreeze_layers: ["encoder.layers.11", "encoder.layers.10", "decoder.layers.11", "decoder.layers.10"]
+  gradient_checkpointing: true
+  freeze_embeddings: true 

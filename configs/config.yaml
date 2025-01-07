@@ -1,0 +1,75 @@
+defaults:
+  - _self_
+  - model: bart
+  - dataset: dialogsumm
+
+do_train: true
+
+
+model:
+  bart:
+    _target_: transformers.BartForConditionalGeneration
+    name: "facebook/bart-large-cnn"
+    
+    model_config:
+      max_length: 1024
+      min_length: 50
+      length_penalty: 2.0
+      num_beams: 4
+      no_repeat_ngram_size: 3
+    
+    training:
+      epochs: 3
+      batch_size: 8
+      learning_rate: 2e-5
+      warmup_steps: 500
+      max_grad_norm: 1.0
+      weight_decay: 0.01
+    
+    fine_tuning:
+      unfreeze_layers: [
+        "model.encoder.layers",  # 인코더 레이어 전체
+        "model.decoder.layers",  # 디코더 레이어 전체
+        "model.shared",         # 공유 임베딩
+        "model.encoder.layernorm_embedding",  # 레이어 정규화
+        "model.decoder.layernorm_embedding"   # 레이어 정규화
+      ]
+      gradient_checkpointing: true
+      freeze_embeddings: false  # 임베딩도 학습에 포함
+  
+  t5:
+    _target_: transformers.T5ForConditionalGeneration
+    name: "t5-small"
+    
+    model_config:
+      max_length: 1024
+      min_length: 50
+      length_penalty: 2.0
+      num_beams: 4
+      no_repeat_ngram_size: 3
+    
+    training:
+      epochs: 3
+      batch_size: 8
+      learning_rate: 3e-5
+      warmup_steps: 500
+      max_grad_norm: 1.0
+      weight_decay: 0.01
+    
+    fine_tuning:
+      unfreeze_layers: ["encoder.block.11", "encoder.block.10", "decoder.block.11", "decoder.block.10"]
+      gradient_checkpointing: true
+      freeze_embeddings: true
+
+dataset:
+  dialogsumm:
+    base_url: "https://raw.githubusercontent.com/cylnlp/dialogsum/main/DialogSum_Data"
+    data_dir: "data"
+    files:
+      train: "train.json"
+      validation: "val.json" 
+
+
+hydra:
+  searchpath:
+    - file://. # 현재 configs 디렉토리를 기준으로 설정

@@ -1,0 +1,5 @@
+base_url: "https://raw.githubusercontent.com/cylnlp/dialogsum/main/DialogSum_Data"
+data_dir: "data"
+files:
+  train: "train.json"
+  validation: "val.json" 
