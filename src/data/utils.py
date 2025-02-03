@@ -4,6 +4,8 @@ import requests
 from tqdm import tqdm
 from torch.utils.data import DataLoader
 from .dataset import DialogueDataset
+import numpy as np
+from torch.utils.data import Subset
 
 def download_file(url: str, save_path: str):
     """파일 다운로드 함수"""
@@ -50,6 +52,11 @@ def load_jsonl(file_path: str) -> list:
             data.append(json.loads(line.strip()))
     return data 
 
-def create_dataloader(data, tokenizer, batch_size, max_length=1024, shuffle=True):
+def create_dataloader(data, tokenizer, batch_size, subset_size=None, max_length=1024, shuffle=True):
+    
     dataset = DialogueDataset(data, tokenizer, max_length)
+    if subset_size is not None:
+        print(f"Creating a subset of {subset_size} samples")
+        subset_indices = np.random.choice(len(data), size=subset_size, replace=False)
+        dataset = Subset(dataset, subset_indices)
     return DataLoader(dataset, batch_size=batch_size, shuffle=shuffle) 

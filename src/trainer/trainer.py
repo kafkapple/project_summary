@@ -11,8 +11,9 @@ class DialogueTrainer(BaseTrainer):
         self.fine_tuning_config = fine_tuning_config or {}
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.rouge_calculator = RougeCalculator()
+        self.subset_size = training_config.get("subset_size", None)
     
-    def train(self, model, train_data, val_data, **kwargs):
+    def train(self, model, train_data, val_data, subset_size=None, **kwargs):
         # 모델 설정
         setup_for_training(model, self.fine_tuning_config)
         
@@ -29,6 +30,7 @@ class DialogueTrainer(BaseTrainer):
                 train_data, 
                 model.tokenizer, 
                 self.training_config.get("batch_size", 8),
+                self.subset_size,
                 model.model_config.get("max_length", 1024)
             )
             
@@ -76,6 +78,7 @@ class DialogueTrainer(BaseTrainer):
             val_data, 
             model.tokenizer, 
             self.training_config.get("batch_size", 8),
+            self.subset_size,
             model.model_config.get("max_length", 1024),
             shuffle=False
         )
